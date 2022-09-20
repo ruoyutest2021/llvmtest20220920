@@ -119,7 +119,6 @@ RUN set -ex; \
         -DCMAKE_C_COMPILER=clang \
         -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
         -DLLVM_ENABLE_RUNTIMES=all \
-        -DLLVM_RUNTIME_TARGETS="$gnuArch" \
         /usr/src/llvm-project/llvm \
     ; \
     cmake --build . -j "$(nproc)"; \
