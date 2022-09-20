@@ -75,6 +75,7 @@ RUN set -ex; \
     \
     cmake \
         -GNinja \
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
         /usr/src/llvm \
     ; \
     ninja all; \
