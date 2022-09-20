@@ -13,6 +13,14 @@ RUN set -ex; \
     # 4096R/D684696D 2018-03-30 Pablo Galindo Salgado <pablogsal@gmail.com>
     gpg --batch --keyserver keyserver.ubuntu.com --recv-keys A035C8C19219BA821ECEA86B64E628F8D684696D; \
     \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        libbluetooth-dev \
+		tk-dev \
+		uuid-dev \
+    ; \
+    rm -r /var/lib/apt/lists/*; \
+    \
     curl -fL "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz.asc" -o 'python.tar.xz.asc'; \
     curl -fL "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz" -o 'python.tar.xz'; \
     gpg --batch --verify python.tar.xz.asc python.tar.xz; \
