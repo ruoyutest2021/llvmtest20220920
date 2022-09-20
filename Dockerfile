@@ -85,15 +85,6 @@ RUN set -ex; \
     tar -xf "cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" -C /usr/local --strip-components=1; \
     rm "cmake-${CMAKE_VERSION}-SHA-256.txt"* "cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz"
 
-ARG NINJA_VERSION
-ENV NINJA_VERSION ${NINJA_VERSION}
-
-RUN set -ex; \
-    \
-    curl -fL "https://github.com/ninja-build/ninja/releases/download/v${NINJA_VERSION}/ninja-linux.zip" -O; \
-    unzip ninja-linux.zip -d /usr/local/bin; \
-    rm ninja-linux.zip
-
 ARG LLVM_VERSION
 ENV LLVM_VERSION ${LLVM_VERSION}
 
@@ -107,10 +98,10 @@ RUN set -ex; \
     \
     gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
     cmake \
-        -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
         -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
         -DLLVM_ENABLE_RUNTIMES=all \
+        -DLLVM_RUNTIME_TARGETS="$gnuArch" \
         /usr/src/llvm-project/llvm \
     ; \
     cmake --build . -j "$(nproc)"; \

@@ -15,7 +15,7 @@ jobs:
       matrix:
         base-image-tag:
           - bionic
-          - focal
+          # - focal
         llvm-version:
           - 15.0.1
           - 14.0.6
@@ -23,11 +23,12 @@ jobs:
           - 12.0.1
           - 11.1.0
           - 10.0.1
+          - 9.0.1
+          - 8.0.1
     env:
       PLATFORMS: linux/amd64
       PYTHON_VERSION: 3.10.7
       CMAKE_VERSION: 3.24.2
-      NINJA_VERSION: 1.11.1
     runs-on: ubuntu-latest
     steps:
       - name: Set environment variables
@@ -52,7 +53,6 @@ jobs:
             BASE_IMAGE_TAG=${{ env.BASE_IMAGE_TAG }}
             PYTHON_VERSION=${{ env.PYTHON_VERSION }}
             CMAKE_VERSION=${{ env.CMAKE_VERSION }}
-            NINJA_VERSION=${{ env.NINJA_VERSION }}
             GCC_RELEASE=${{ env.GCC_RELEASE }}
             LLVM_VERSION=${{ env.LLVM_VERSION }}
           outputs: type=tar,dest=llvm-${{ env.LLVM_VERSION }}-${{ env.BASE_IMAGE_TAG }}.tar
