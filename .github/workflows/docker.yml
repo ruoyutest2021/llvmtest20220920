@@ -15,6 +15,7 @@ jobs:
       matrix:
         base-image-tag:
           - bionic
+          - focal
         llvm-version:
           - 15.0.1
           - 14.0.6
