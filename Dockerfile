@@ -61,24 +61,15 @@ RUN set -ex; \
     tar -xf cmake.tar.gz -C /usr/local --strip-components=1; \
     rm cmake.tar.gz; \
     \
-    curl -fL "https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-linux.zip" -o 'ninja.zip'; \
-    echo "b901ba96e486dce377f9a070ed4ef3f79deb45f4ffe2938f8e7ddc69cfb3df77 ninja.zip" | \
-        sha256sum -c; \
-    unzip ninja.zip -d /usr/local/bin; \
-    rm ninja.zip; \
-    \
     mkdir -p /usr/src/llvm; \
     git clone -b "llvmorg-${LLVM_VERSION}" --single-branch "https://github.com/llvm/llvm-project.git" /usr/src/llvm; \
     \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
-    cmake \
-        -GNinja \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        /usr/src/llvm \
-    ; \
-    ninja all; \
+    cmake /usr/src/llvm; \
+    cmake --build . -j "$(nproc)"; \
+    cmake --build . --target install; \
     \
     cd ..; \
     rm -rf "$dir" /usr/src/llvm
