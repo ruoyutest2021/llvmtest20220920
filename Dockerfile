@@ -58,19 +58,20 @@ ENV LLVM_VERSION ${LLVM_VERSION}
 
 RUN set -ex; \
     \
-    mkdir -p /usr/src/llvm; \
-    git clone --branch="llvmorg-${LLVM_VERSION}" --depth=1 "https://github.com/llvm/llvm-project.git" /usr/src/llvm; \
+    mkdir -p /usr/src/llvm-project; \
+    git clone --branch="llvmorg-${LLVM_VERSION}" --depth=1 "https://github.com/llvm/llvm-project.git" /usr/src/llvm-project; \
     \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
     cmake \
-        -DLLVM_ENABLE_PROJECTS=clang \
+        -DLLVM_ENABLE_PROJECTS="clang" \
+        -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
         -DCMAKE_BUILD_TYPE=Release \
-        /usr/src/llvm/llvm \
+        /usr/src/llvm-project/llvm \
     ; \
     cmake --build . -j "$(nproc)"; \
     cmake --build . --target install; \
     \
     cd ..; \
-    rm -rf "$dir" /usr/src/llvm
+    rm -rf "$dir" /usr/src/llvm-project
