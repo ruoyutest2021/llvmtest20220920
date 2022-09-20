@@ -20,6 +20,7 @@ RUN set -ex; \
     tar -xf python.tar.xz -C /usr/src/python --strip-components=1; \
     rm python.tar.xz*; \
     \
+	cd /usr/src/python; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
     ./configure \
 		--build="$gnuArch" \
