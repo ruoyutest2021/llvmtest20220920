@@ -94,19 +94,10 @@ RUN set -ex; \
     unzip ninja-linux.zip -d /usr/local/bin; \
     rm ninja-linux.zip
 
-ARG GCC_RELEASE
-ENV GCC_RELEASE ${GCC_RELEASE}
 ARG LLVM_VERSION
 ENV LLVM_VERSION ${LLVM_VERSION}
 
 RUN set -ex; \
-    \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        "gcc-${GCC_RELEASE}" \
-        "g++-${GCC_RELEASE}" \
-    ; \
-    rm -r /var/lib/apt/lists/*; \
     \
     mkdir -p /usr/src/llvm-project; \
     git clone --branch="llvmorg-${LLVM_VERSION}" --depth=1 "https://github.com/llvm/llvm-project.git" /usr/src/llvm-project; \
@@ -118,8 +109,6 @@ RUN set -ex; \
     cmake \
         -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_CXX_COMPILER="g++-${GCC_RELEASE}" \
-        -DCMAKE_C_COMPILER="gcc-${GCC_RELEASE}" \
         -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
         -DLLVM_ENABLE_RUNTIMES=all \
         /usr/src/llvm-project/llvm \
