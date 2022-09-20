@@ -47,7 +47,7 @@ RUN set -ex; \
     \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
-        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
+        -DLLVM_ENABLE_PROJECTS=all \
         -DLLVM_ENABLE_RUNTIMES=all \
         # https://github.com/llvm/llvm-project/issues/55517
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON \
