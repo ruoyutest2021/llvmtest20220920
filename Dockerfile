@@ -67,7 +67,10 @@ RUN set -ex; \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
-    cmake /usr/src/llvm; \
+    cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        /usr/src/llvm \
+    ; \
     cmake --build . -j "$(nproc)"; \
     cmake --build . --target install; \
     \
