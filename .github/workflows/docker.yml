@@ -15,26 +15,21 @@ jobs:
       matrix:
         base-image-tag:
           - bionic
-          # - focal
+          - buster
         llvm-version:
           - 15.0.1
           - 14.0.6
           - 13.0.1
           - 12.0.1
           - 11.1.0
-          - 10.0.1
-          - 9.0.1
-          - 8.0.1
     env:
       PLATFORMS: linux/amd64
-      PYTHON_VERSION: 3.10.7
       CMAKE_VERSION: 3.24.2
     runs-on: ubuntu-latest
     steps:
       - name: Set environment variables
         run: |
           echo "BASE_IMAGE_TAG=${{ matrix.base-image-tag }}" | tee -a "$GITHUB_ENV"
-          echo "GCC_RELEASE=${{ matrix.base-image.gcc-release }}" | tee -a "$GITHUB_ENV"
           echo "LLVM_VERSION=${{ matrix.llvm-version }}" | tee -a "$GITHUB_ENV"
       # - name: Set up QEMU
       #   uses: docker/setup-qemu-action@v2
@@ -51,9 +46,7 @@ jobs:
           platforms: ${{ env.PLATFORMS }}
           build-args: |
             BASE_IMAGE_TAG=${{ env.BASE_IMAGE_TAG }}
-            PYTHON_VERSION=${{ env.PYTHON_VERSION }}
             CMAKE_VERSION=${{ env.CMAKE_VERSION }}
-            GCC_RELEASE=${{ env.GCC_RELEASE }}
             LLVM_VERSION=${{ env.LLVM_VERSION }}
           outputs: type=tar,dest=llvm-${{ env.LLVM_VERSION }}-${{ env.BASE_IMAGE_TAG }}.tar
       - uses: actions/upload-artifact@v3
