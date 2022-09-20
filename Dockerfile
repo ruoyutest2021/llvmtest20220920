@@ -35,7 +35,7 @@ RUN set -ex; \
     make -j "$(nproc)"; \
     make install; \
     \
-    rm -rf /usr/src/python;
+    rm -rf /usr/src/python
 
 ARG LLVM_VERSION
 ENV LLVM_VERSION ${LLVM_VERSION}
@@ -73,10 +73,11 @@ RUN set -ex; \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
-    cmake /usr/src/llvm \
+    cmake \
         -GNinja \
+        /usr/src/llvm \
     ; \
     ninja all; \
     \
     cd ..; \
-    rm -rf "$dir" /usr/src/llvm;
+    rm -rf "$dir" /usr/src/llvm
