@@ -16,8 +16,8 @@ RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         libbluetooth-dev \
-		tk-dev \
-		uuid-dev \
+        tk-dev \
+        uuid-dev \
     ; \
     rm -r /var/lib/apt/lists/*; \
     \
@@ -45,29 +45,29 @@ RUN set -ex; \
     \
     # enable GDB to load debugging data: https://github.com/docker-library/python/pull/701
     bin="$(readlink -ve /usr/local/bin/python3)"; \
-	dir="$(dirname "$bin")"; \
-	mkdir -p "/usr/share/gdb/auto-load/$dir"; \
-	cp -vL Tools/gdb/libpython.py "/usr/share/gdb/auto-load/$bin-gdb.py"; \
+    dir="$(dirname "$bin")"; \
+    mkdir -p "/usr/share/gdb/auto-load/$dir"; \
+    cp -vL Tools/gdb/libpython.py "/usr/share/gdb/auto-load/$bin-gdb.py"; \
     \
     cd /; \
     rm -rf /usr/src/python; \
     \
     find /usr/local -depth \
-		\( \
-			\( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
-			-o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
-		\) -exec rm -rf '{}' + \
-	; \
+        \( \
+            \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
+            -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
+        \) -exec rm -rf '{}' + \
+    ; \
     \
     ldconfig; \
     \
     # make some useful symlinks that are expected to exist ("/usr/local/bin/python" and friends)
     for src in idle3 pydoc3 python3 python3-config; do \
-		dst="$(echo "$src" | tr -d 3)"; \
-		[ -s "/usr/local/bin/$src" ]; \
-		[ ! -e "/usr/local/bin/$dst" ]; \
-		ln -svT "$src" "/usr/local/bin/$dst"; \
-	done
+        dst="$(echo "$src" | tr -d 3)"; \
+        [ -s "/usr/local/bin/$src" ]; \
+        [ ! -e "/usr/local/bin/$dst" ]; \
+        ln -svT "$src" "/usr/local/bin/$dst"; \
+    done
 
 ARG CMAKE_VERSION
 ENV CMAKE_VERSION ${CMAKE_VERSION}
@@ -85,10 +85,25 @@ RUN set -ex; \
     tar -xf "cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" -C /usr/local --strip-components=1; \
     rm "cmake-${CMAKE_VERSION}-SHA-256.txt"* "cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz"
 
+ARG NINJA_VERSION
+ENV NINJA_VERSION ${NINJA_VERSION}
+
+RUN set -ex; \
+    \
+    curl -fL "https://github.com/ninja-build/ninja/releases/download/v${NINJA_VERSION}/ninja-linux.zip" -O; \
+    unzip ninja-linux.zip -d /usr/local/bin; \
+    rm ninja-linux.zip
+
 ARG LLVM_VERSION
 ENV LLVM_VERSION ${LLVM_VERSION}
 
 RUN set -ex; \
+    \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        clang \
+    ; \
+    rm -r /var/lib/apt/lists/*; \
     \
     mkdir -p /usr/src/llvm-project; \
     git clone --branch="llvmorg-${LLVM_VERSION}" --depth=1 "https://github.com/llvm/llvm-project.git" /usr/src/llvm-project; \
@@ -98,9 +113,12 @@ RUN set -ex; \
     \
     gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
     cmake \
+        -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_CXX_COMPILER=clang++ \
+        -DCMAKE_C_COMPILER=clang \
         -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
-        -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
+        -DLLVM_ENABLE_RUNTIMES=all \
         -DLLVM_RUNTIME_TARGETS="$gnuArch" \
         /usr/src/llvm-project/llvm \
     ; \
