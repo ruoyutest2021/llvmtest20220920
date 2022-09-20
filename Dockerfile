@@ -24,16 +24,17 @@ RUN set -ex; \
     \
     mkdir -p /usr/src/llvm-project; \
     git clone --branch="llvmorg-${LLVM_VERSION}" --depth=1 "https://github.com/llvm/llvm-project.git" /usr/src/llvm-project; \
+    rm -rf /usr/src/llvm-project/.git; \
     \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
-    gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
         -DLLVM_ENABLE_RUNTIMES=all \
-        -DLLVM_RUNTIME_TARGETS="$gnuArch" \
+        # https://github.com/llvm/llvm-project/issues/55517
+        -DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON \
         /usr/src/llvm-project/llvm \
     ; \
     cmake --build . -j "$(nproc)"; \
