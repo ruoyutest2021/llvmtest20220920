@@ -81,7 +81,10 @@ RUN set -ex; \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
-    cmake -GNinja /usr/src/llvm; \
+    cmake /usr/src/llvm \
+        -GNinja \
+        -DCMAKE_BUILD_TYPE=Release \
+    ; \
     ninja all; \
     \
     cd ..; \
