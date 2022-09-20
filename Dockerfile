@@ -65,8 +65,8 @@ RUN set -ex; \
     cd "$dir"; \
     \
     cmake \
-        -DLLVM_ENABLE_PROJECTS="clang" \
-        -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
+        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
+        -DLLVM_ENABLE_RUNTIMES=all \
         -DCMAKE_BUILD_TYPE=Release \
         /usr/src/llvm-project/llvm \
     ; \
