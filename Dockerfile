@@ -65,8 +65,9 @@ RUN set -ex; \
     cd "$dir"; \
     \
     cmake \
+        -DLLVM_ENABLE_PROJECTS=clang \
         -DCMAKE_BUILD_TYPE=Release \
-        /usr/src/llvm/clang \
+        /usr/src/llvm/llvm \
     ; \
     cmake --build . -j "$(nproc)"; \
     cmake --build . --target install; \
