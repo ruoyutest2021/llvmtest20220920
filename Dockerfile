@@ -20,22 +20,46 @@ RUN set -ex; \
     tar -xf python.tar.xz -C /usr/src/python --strip-components=1; \
     rm python.tar.xz*; \
     \
-	cd /usr/src/python; \
-	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+    cd /usr/src/python; \
+    gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
     ./configure \
-		--build="$gnuArch" \
-		--enable-loadable-sqlite-extensions \
-		--enable-optimizations \
-		--enable-option-checking=fatal \
-		--enable-shared \
+        --build="$gnuArch" \
+        --enable-loadable-sqlite-extensions \
+        --enable-optimizations \
+        --enable-option-checking=fatal \
+        --enable-shared \
         --with-lto \
-		--with-system-expat \
-		--without-ensurepip \
-	; \
+        --with-system-expat \
+        --without-ensurepip \
+    ; \
     make -j "$(nproc)"; \
     make install; \
     \
-    rm -rf /usr/src/python
+    # enable GDB to load debugging data: https://github.com/docker-library/python/pull/701
+    bin="$(readlink -ve /usr/local/bin/python3)"; \
+	dir="$(dirname "$bin")"; \
+	mkdir -p "/usr/share/gdb/auto-load/$dir"; \
+	cp -vL Tools/gdb/libpython.py "/usr/share/gdb/auto-load/$bin-gdb.py"; \
+    \
+    cd /; \
+    rm -rf /usr/src/python; \
+    \
+    find /usr/local -depth \
+		\( \
+			\( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
+			-o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
+		\) -exec rm -rf '{}' + \
+	; \
+    \
+    ldconfig; \
+    \
+    # make some useful symlinks that are expected to exist ("/usr/local/bin/python" and friends)
+    for src in idle3 pydoc3 python3 python3-config; do \
+		dst="$(echo "$src" | tr -d 3)"; \
+		[ -s "/usr/local/bin/$src" ]; \
+		[ ! -e "/usr/local/bin/$dst" ]; \
+		ln -svT "$src" "/usr/local/bin/$dst"; \
+	done
 
 ARG CMAKE_VERSION
 ENV CMAKE_VERSION ${CMAKE_VERSION}
@@ -65,9 +89,10 @@ RUN set -ex; \
     cd "$dir"; \
     \
     cmake \
-        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
-        -DLLVM_ENABLE_RUNTIMES=all \
         -DCMAKE_BUILD_TYPE=Release \
+        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
+        -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
+        -DPython_EXECUTABLE=/usr/local/bin/python3 \
         /usr/src/llvm-project/llvm \
     ; \
     cmake --build . -j "$(nproc)"; \
