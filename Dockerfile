@@ -94,6 +94,8 @@ RUN set -ex; \
     unzip ninja-linux.zip -d /usr/local/bin; \
     rm ninja-linux.zip
 
+ARG GCC_RELEASE
+ENV GCC_RELEASE ${GCC_RELEASE}
 ARG LLVM_VERSION
 ENV LLVM_VERSION ${LLVM_VERSION}
 
@@ -101,7 +103,8 @@ RUN set -ex; \
     \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-        clang \
+        "gcc-${GCC_RELEASE}" \
+        "g++-${GCC_RELEASE}" \
     ; \
     rm -r /var/lib/apt/lists/*; \
     \
@@ -115,8 +118,8 @@ RUN set -ex; \
     cmake \
         -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_CXX_COMPILER=clang++ \
-        -DCMAKE_C_COMPILER=clang \
+        -DCMAKE_CXX_COMPILER="g++-${GCC_RELEASE}" \
+        -DCMAKE_C_COMPILER="gcc-${GCC_RELEASE}" \
         -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
         -DLLVM_ENABLE_RUNTIMES=all \
         /usr/src/llvm-project/llvm \
