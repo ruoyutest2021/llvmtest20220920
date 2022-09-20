@@ -28,7 +28,7 @@ RUN set -ex; \
     echo "71a776b6a08135092b5beb00a603b60ca39f8231c01a0356e205e0b4631747d9 cmake.tar.gz" | \
         sha256sum -c; \
     tar -xf cmake.tar.gz -C /usr/local --strip-components=1; \
-    rm cmake-tar.gz; \
+    rm cmake.tar.gz; \
     \
     curl -fL "https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip" -o 'ninja.zip'; \
     echo "d2fea9ff33b3ef353161ed906f260d565ca55b8ca0568fa07b1d2cab90a84a07 ninja.zip" | \
