@@ -15,7 +15,7 @@ RUN set -ex; \
     gpg --batch --verify "cmake-${CMAKE_VERSION}-SHA-256.txt.asc" "cmake-${CMAKE_VERSION}-SHA-256.txt"; \
     sha256sum -c --ignore-missing "cmake-${CMAKE_VERSION}-SHA-256.txt"; \
     tar -xf "cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" -C /usr/local --strip-components=1; \
-    rm "cmake-${CMAKE_VERSION}-SHA-256.txt"* "cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz"
+    rm "cmake-${CMAKE_VERSION}"*
 
 ARG LLVM_VERSION
 ENV LLVM_VERSION ${LLVM_VERSION}
@@ -31,7 +31,7 @@ RUN set -ex; \
     \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
-        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
+        -DLLVM_ENABLE_PROJECTS=all \
         -DLLVM_ENABLE_RUNTIMES=all \
         # https://github.com/llvm/llvm-project/issues/55517
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON \
