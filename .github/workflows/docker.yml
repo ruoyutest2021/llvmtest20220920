@@ -12,47 +12,59 @@ jobs:
       matrix:
         target:
           - build-args: |
-              BASE_IMAGE_TAG=bionic
-              LLVM_VERSION=15
+              BASE_IMAGE_TAG=xenial
+              LLVM_VERSION=15.0.0
             outputs: |
-              type=tar,dest=llvm-15-bionic.tar
-            artifact: llvm-15-bionic.tar
+              type=tar,dest=llvm-15.0.0-xenial.tar
+            artifact: llvm-15.0.0-xenial.tar
           - build-args: |
-              BASE_IMAGE_TAG=bionic
-              LLVM_VERSION=14
+              BASE_IMAGE_TAG=xenial
+              LLVM_VERSION=14.0.6
             outputs: |
-              type=tar,dest=llvm-14-bionic.tar
-            artifact: llvm-14-bionic.tar
+              type=tar,dest=llvm-14.0.6-xenial.tar
+            artifact: llvm-14.0.6-xenial.tar
           - build-args: |
-              BASE_IMAGE_TAG=bionic
-              LLVM_VERSION=13
+              BASE_IMAGE_TAG=xenial
+              PYTHON_VERSION=3.10.7
+              LLVM_VERSION=13.0.1
             outputs: |
-              type=tar,dest=llvm-13-bionic.tar
-            artifact: llvm-13-bionic.tar
+              type=tar,dest=llvm-13.0.1-xenial.tar
+            artifact: llvm-13.0.1-xenial.tar
           - build-args: |
-              BASE_IMAGE_TAG=bionic
-              LLVM_VERSION=12
+              BASE_IMAGE_TAG=xenial
+              PYTHON_VERSION=3.10.7
+              LLVM_VERSION=12.0.1
             outputs: |
-              type=tar,dest=llvm-12-bionic.tar
-            artifact: llvm-12-bionic.tar
+              type=tar,dest=llvm-12.0.1-xenial.tar
+            artifact: llvm-12.0.1-xenial.tar
           - build-args: |
-              BASE_IMAGE_TAG=bionic
-              LLVM_VERSION=11
+              BASE_IMAGE_TAG=xenial
+              PYTHON_VERSION=3.10.7
+              LLVM_VERSION=11.1.0
             outputs: |
-              type=tar,dest=llvm-11-bionic.tar
-            artifact: llvm-11-bionic.tar
+              type=tar,dest=llvm-11.1.0-xenial.tar
+            artifact: llvm-11.1.0-xenial.tar
           - build-args: |
-              BASE_IMAGE_TAG=bionic
-              LLVM_VERSION=10
+              BASE_IMAGE_TAG=xenial
+              PYTHON_VERSION=3.10.7
+              LLVM_VERSION=10.0.1
             outputs: |
-              type=tar,dest=llvm-10-bionic.tar
-            artifact: llvm-10-bionic.tar
+              type=tar,dest=llvm-10.0.1-xenial.tar
+            artifact: llvm-10.0.1-xenial.tar
           - build-args: |
-              BASE_IMAGE_TAG=bionic
-              LLVM_VERSION=9
+              BASE_IMAGE_TAG=xenial
+              PYTHON_VERSION=3.10.7
+              LLVM_VERSION=9.0.1
             outputs: |
-              type=tar,dest=llvm-9-bionic.tar
-            artifact: llvm-9-bionic.tar
+              type=tar,dest=llvm-9.0.1-xenial.tar
+            artifact: llvm-9.0.1-xenial.tar
+          - build-args: |
+              BASE_IMAGE_TAG=xenial
+              PYTHON_VERSION=3.10.7
+              LLVM_VERSION=8.0.1
+            outputs: |
+              type=tar,dest=llvm-8.0.1-xenial.tar
+            artifact: llvm-8.0.1-xenial.tar
     runs-on: ubuntu-latest
     steps:
       - uses: docker/setup-buildx-action@v2
