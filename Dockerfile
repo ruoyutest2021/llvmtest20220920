@@ -17,21 +17,37 @@ RUN set -ex; \
     tar -xf "cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" -C /usr/local --strip-components=1; \
     rm "cmake-${CMAKE_VERSION}"*
 
+ENV GPG_KEYS \
+# 4096R/345AD05D 2015-01-20 Hans Wennborg <hans@chromium.org>
+    B6C8F98282B944E3B0D5C2530FC3042E345AD05D \
+# 4096R/86419D8A 2018-05-03 Tom Stellard <tstellar@redhat.com>
+    474E22316ABF4785A88C6E8EA2C794A986419D8A \
+# 3072R/45D59042 2022-08-05 Tobias Hieta <tobias@hieta.se>
+    D574BD5D1D0E98895E3BF90044F2485E45D59042
+
+RUN set -ex; \
+    for key in $GPG_KEYS; do \
+        gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
+    done
+
 ARG LLVM_VERSION
 ENV LLVM_VERSION ${LLVM_VERSION}
 
 RUN set -ex; \
     \
+    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.tar.xz.sig" -o 'llvm-project.tar.xz.sig'; \
+    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.tar.xz" -o 'llvm-project.tar.xz'; \
+    gpg --batch --verify llvm-project.tar.xz.sig llvm-project.tar.xz; \
     mkdir -p /usr/src/llvm-project; \
-    git clone --branch="llvmorg-${LLVM_VERSION}" --depth=1 "https://github.com/llvm/llvm-project.git" /usr/src/llvm-project; \
-    rm -rf /usr/src/llvm-project/.git; \
+    tar -xf llvm-project.tar.xz -C /usr/src/llvm-project --strip-components=1; \
+    rm llvm-project.tar.xz*; \
     \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
-        -DLLVM_ENABLE_PROJECTS=all \
+        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
         -DLLVM_ENABLE_RUNTIMES=all \
         # https://github.com/llvm/llvm-project/issues/55517
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON \
