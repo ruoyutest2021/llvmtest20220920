@@ -37,39 +37,36 @@ RUN set -ex; \
     \
     rm -rf /usr/src/python
 
+ARG CMAKE_VERSION
+ENV CMAKE_VERSION ${CMAKE_VERSION}
+
+RUN set -ex; \
+    \
+    # 4096R/7BFB4EDA 2010-02-16 Brad King
+    gpg --batch --keyserver keyserver.ubuntu.com --recv-keys CBA23971357C2E6590D9EFD3EC8FEF3A7BFB4EDA; \
+    \
+    curl -fL "https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-SHA-256.txt.asc" -O; \
+    curl -fL "https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-SHA-256.txt" -O; \
+    curl -fL "https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" -O; \
+    gpg --batch --verify "cmake-${CMAKE_VERSION}-SHA-256.txt.asc" "cmake-${CMAKE_VERSION}-SHA-256.txt"; \
+    sha256sum -c --ignore-missing "cmake-${CMAKE_VERSION}-SHA-256.txt"; \
+    tar -xf "cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" -C /usr/local --strip-components=1; \
+    rm "cmake-${CMAKE_VERSION}-SHA-256.txt"* "cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz"
+
 ARG LLVM_VERSION
 ENV LLVM_VERSION ${LLVM_VERSION}
 
-ENV GPG_KEYS \
-# 4096R/345AD05D 2015-01-20 Hans Wennborg <hans@chromium.org>
-    B6C8F98282B944E3B0D5C2530FC3042E345AD05D \
-# 4096R/86419D8A 2018-05-03 Tom Stellard <tstellar@redhat.com>
-    474E22316ABF4785A88C6E8EA2C794A986419D8A \
-# 3072R/45D59042 2022-08-05 Tobias Hieta <tobias@hieta.se>
-    D574BD5D1D0E98895E3BF90044F2485E45D59042
-
 RUN set -ex; \
-    for key in $GPG_KEYS; do \
-        gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
-    done
-
-RUN set -ex; \
-    \
-    curl -fL "https://github.com/Kitware/CMake/releases/download/v3.24.2/cmake-3.24.2-linux-x86_64.tar.gz" -o 'cmake.tar.gz'; \
-    echo "71a776b6a08135092b5beb00a603b60ca39f8231c01a0356e205e0b4631747d9 cmake.tar.gz" | \
-        sha256sum -c; \
-    tar -xf cmake.tar.gz -C /usr/local --strip-components=1; \
-    rm cmake.tar.gz; \
     \
     mkdir -p /usr/src/llvm; \
-    git clone -b "llvmorg-${LLVM_VERSION}" --single-branch "https://github.com/llvm/llvm-project.git" /usr/src/llvm; \
+    git clone --branch="llvmorg-${LLVM_VERSION}" --depth=1 "https://github.com/llvm/llvm-project.git" /usr/src/llvm; \
     \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
-        /usr/src/llvm \
+        /usr/src/llvm/clang \
     ; \
     cmake --build . -j "$(nproc)"; \
     cmake --build . --target install; \
