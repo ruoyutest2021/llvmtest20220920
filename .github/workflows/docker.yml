@@ -15,8 +15,8 @@ jobs:
       matrix:
         base-image-tag:
           - bullseye
-          # - buster
-          # - jammy
+          - buster
+          - jammy
           - focal
           # - bionic
         llvm-version:
@@ -29,7 +29,7 @@ jobs:
           # - llvm-enable-projects: clang;clang-tools-extra;lld;lldb
           #   llvm-enable-runtimes: all
           #   config-suffix: ""
-          - llvm-enable-projects: clang;clang-tools-extra;flang;libclc;lld;lldb;mlir;polly;pstl
+          - llvm-enable-projects: clang;clang-tools-extra;lld;lldb;flang;mlir;polly
             llvm-enable-runtimes: all
             config-suffix: -all
     env:
