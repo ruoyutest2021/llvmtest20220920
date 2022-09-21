@@ -78,15 +78,18 @@ RUN set -ex; \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
+    if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -lt 12 ]; then \
+        curl -fL "https://github.com/llvm/llvm-project/commit/b498303066a63a203d24f739b2d2e0e56dca70d1.patch" | \
+            git apply; \
+    \
+    fi; \
+    \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
         -DLLVM_ENABLE_RUNTIMES=all \
         # https://github.com/llvm/llvm-project/issues/55517
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON \
-        # https://github.com/google/benchmark/pull/1060
-        -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
-        $extraCmakeArgs \
         /usr/src/llvm-project/llvm \
     ; \
     cmake --build . -j "$(nproc)"; \
