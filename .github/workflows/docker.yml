@@ -14,8 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         base-image-tag:
-          - bionic
           - buster
+          - focal
         llvm-version:
           - 15.0.1
           - 14.0.6
@@ -24,6 +24,7 @@ jobs:
           - 11.1.0
     env:
       PLATFORMS: linux/amd64
+      BINUTILS_VERSION: 2.39
       CMAKE_VERSION: 3.24.2
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +43,7 @@ jobs:
           platforms: ${{ env.PLATFORMS }}
           build-args: |
             BASE_IMAGE_TAG=${{ env.BASE_IMAGE_TAG }}
+            BINUTILS_VERSION=${{ env.BINUTILS_VERSION }}
             CMAKE_VERSION=${{ env.CMAKE_VERSION }}
             LLVM_VERSION=${{ env.LLVM_VERSION }}
           outputs: type=tar,dest=llvm-${{ env.LLVM_VERSION }}-${{ env.BASE_IMAGE_TAG }}.tar
