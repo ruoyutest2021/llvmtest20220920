@@ -15,10 +15,10 @@ jobs:
       matrix:
         base-image-tag:
           # - bullseye
-          # - buster
+          - buster
           - jammy
           # - focal
-          - bionic
+          # - bionic
         llvm-version:
           - 15.0.1
           - 14.0.6
@@ -28,10 +28,10 @@ jobs:
         llvm-configuration:
           # - llvm-enable-projects: clang;clang-tools-extra;lld;lldb
           #   llvm-enable-runtimes: all
-          #   tag-suffix: ""
+          #   config-suffix: ""
           - llvm-enable-projects: clang;clang-tools-extra;flang;libclc;lld;lldb;mlir;polly;pstl
             llvm-enable-runtimes: all
-            tag-suffix: -all
+            config-suffix: -all
     env:
       PLATFORMS: linux/amd64
       BINUTILS_VERSION: 2.39
@@ -47,7 +47,7 @@ jobs:
           echo "LLVM_VERSION_REVISION=$(echo "${{ matrix.llvm-version }}" | cut -d '.' -f 3)" | tee -a "$GITHUB_ENV"
           echo "LLVM_ENABLE_PROJECTS=${{ matrix.llvm-configuration.llvm-enable-projects }}" | tee -a "$GITHUB_ENV"
           echo "LLVM_ENABLE_RUNTIMES=${{ matrix.llvm-configuration.llvm-enable-runtimes }}" | tee -a "$GITHUB_ENV"
-          echo "TAG_SUFFIX=${{ matrix.llvm-configuration.tag-suffix }}" | tee -a "$GITHUB_ENV"
+          echo "CONFIG_SUFFIX=${{ matrix.llvm-configuration.config-suffix }}" | tee -a "$GITHUB_ENV"
       # - name: Set up QEMU
       #   uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -68,8 +68,8 @@ jobs:
             LLVM_VERSION=${{ env.LLVM_VERSION }}
             LLVM_ENABLE_PROJECTS=${{ env.LLVM_ENABLE_PROJECTS }}
             LLVM_ENABLE_RUNTIMES=${{ env.LLVM_ENABLE_RUNTIMES }}
-          outputs: type=tar,dest=llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.TAG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}.tar
+          outputs: type=tar,dest=llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}.tar
       - uses: actions/upload-artifact@v3
         with:
-          name: llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.TAG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}
-          path: llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.TAG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}.tar
+          name: llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}
+          path: llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}.tar
