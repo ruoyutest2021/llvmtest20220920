@@ -26,12 +26,12 @@ jobs:
           - 12.0.1
           - 11.1.0
         llvm-configuration:
-          - llvm-enable-projects: clang;clang-tools-extra;lld;lldb
-            llvm-enable-runtimes: compiler-rt;libcxx;libcxxabi;libunwind;openmp
-            config-suffix: ""
-          # - llvm-enable-projects: clang;clang-tools-extra;flang;lld;lldb;mlir;polly
+          # - llvm-enable-projects: clang;clang-tools-extra;lld;lldb
           #   llvm-enable-runtimes: compiler-rt;libcxx;libcxxabi;libunwind;openmp
-          #   config-suffix: -all
+          #   config-suffix: ""
+          - llvm-enable-projects: clang;clang-tools-extra;flang;lld;lldb;mlir;polly
+            llvm-enable-runtimes: compiler-rt;libcxx;libcxxabi;libunwind;openmp
+            config-suffix: -all
     env:
       PLATFORMS: linux/amd64
       BINUTILS_VERSION: 2.39
