@@ -78,12 +78,19 @@ RUN set -ex; \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
+    extraCmakeArgs=''; \
+    if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -lt 13 ]; then \
+        # https://github.com/google/benchmark/pull/1060
+        extraCmakeArgs="$extraCmakeArgs -DLIBCXX_INCLUDE_BENCHMARKS=OFF"; \
+    fi; \
+    \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb" \
         -DLLVM_ENABLE_RUNTIMES=all \
         # https://github.com/llvm/llvm-project/issues/55517
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON \
+        $extraCmakeArgs \
         /usr/src/llvm-project/llvm \
     ; \
     cmake --build . -j "$(nproc)"; \
