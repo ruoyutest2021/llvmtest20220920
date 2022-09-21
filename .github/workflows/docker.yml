@@ -15,7 +15,6 @@ jobs:
       matrix:
         base-image-tag:
           - bionic
-          - buster
         llvm-version:
           - 15.0.1
           - 14.0.6
