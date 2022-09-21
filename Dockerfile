@@ -75,14 +75,15 @@ RUN set -ex; \
     tar -xf llvm-project.tar.xz -C /usr/src/llvm-project --strip-components=1; \
     rm llvm-project.tar.xz*; \
     \
-    dir="$(mktemp -d)"; \
-    cd "$dir"; \
-    \
+    cd /usr/src/llvm-project; \
     if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -lt 12 ]; then \
         curl -fL "https://github.com/llvm/llvm-project/commit/b498303066a63a203d24f739b2d2e0e56dca70d1.patch" | \
             git apply; \
     \
     fi; \
+    \
+    dir="$(mktemp -d)"; \
+    cd "$dir"; \
     \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
