@@ -71,8 +71,8 @@ ARG LLVM_ENABLE_RUNTIMES
 
 RUN set -ex; \
     \
-    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.src.tar.xz.sig" -o 'llvm-project.tar.xz.sig'; \
-    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.src.tar.xz" -o 'llvm-project.tar.xz'; \
+    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.tar.xz.sig" -o 'llvm-project.tar.xz.sig'; \
+    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.tar.xz" -o 'llvm-project.tar.xz'; \
     gpg --batch --verify llvm-project.tar.xz.sig llvm-project.tar.xz; \
     mkdir -p /usr/src/llvm-project; \
     tar -xf llvm-project.tar.xz -C /usr/src/llvm-project --strip-components=1; \
