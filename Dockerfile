@@ -66,8 +66,8 @@ RUN set -ex; \
 ARG LLVM_VERSION
 ENV LLVM_VERSION ${LLVM_VERSION}
 
-ARG LLVM_ENABLE_PROJECTS
-ARG LLVM_ENABLE_RUNTIMES
+ARG CMAKE_BUILD_TYPE
+ARG EXTRA_CMAKE_ARGS
 
 RUN set -ex; \
     \
@@ -91,13 +91,12 @@ RUN set -ex; \
     cd "$dir"; \
     \
     cmake \
-        -DCMAKE_BUILD_TYPE=MinSizeRel \
-        -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
-        -DLLVM_ENABLE_RUNTIMES="${LLVM_ENABLE_RUNTIMES}" \
-        -DLLVM_BUILD_LLVM_DYLIB=ON \
-        -DLLVM_LINK_LLVM_DYLIB=ON \
+        -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
+        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;flang;lld;lldb;mlir;polly" \
+        -DLLVM_ENABLE_RUNTIMES="compiler-rt;libcxx;libcxxabi;libunwind;openmp" \
         # https://github.com/llvm/llvm-project/issues/55517
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON \
+        ${EXTRA_CMAKE_ARGS} \
         /usr/src/llvm-project/llvm \
     ; \
     cmake --build . -j "$(nproc)"; \

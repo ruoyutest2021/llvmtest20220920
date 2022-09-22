@@ -16,7 +16,7 @@ jobs:
         base-image-tag:
           # - bullseye
           # - buster
-          # - jammy
+          - jammy
           # - focal
           - bionic
         llvm-version:
@@ -24,14 +24,12 @@ jobs:
           # - 14.0.6
           # - 13.0.1
           # - 12.0.1
-          # - 11.1.0
+          - 11.1.0
         llvm-configuration:
-          - llvm-enable-projects: clang;clang-tools-extra;lld;lldb
-            llvm-enable-runtimes: compiler-rt;libcxx;libcxxabi;libunwind;openmp
-            config-suffix: ""
-          - llvm-enable-projects: clang;clang-tools-extra;flang;lld;lldb;mlir;polly
-            llvm-enable-runtimes: compiler-rt;libcxx;libcxxabi;libunwind;openmp
-            config-suffix: -all
+          - cmake-build-type: Release
+          - cmake-build-type: MinSizeRel
+            extra-cmake-args: ""
+            config-suffix: -slim
     env:
       PLATFORMS: linux/amd64
       BINUTILS_VERSION: 2.39
@@ -45,8 +43,8 @@ jobs:
           echo "LLVM_VERSION_MAJOR=$(echo "${{ matrix.llvm-version }}" | cut -d '.' -f 1)" | tee -a "$GITHUB_ENV"
           echo "LLVM_VERSION_MINOR=$(echo "${{ matrix.llvm-version }}" | cut -d '.' -f 2)" | tee -a "$GITHUB_ENV"
           echo "LLVM_VERSION_REVISION=$(echo "${{ matrix.llvm-version }}" | cut -d '.' -f 3)" | tee -a "$GITHUB_ENV"
-          echo "LLVM_ENABLE_PROJECTS=${{ matrix.llvm-configuration.llvm-enable-projects }}" | tee -a "$GITHUB_ENV"
-          echo "LLVM_ENABLE_RUNTIMES=${{ matrix.llvm-configuration.llvm-enable-runtimes }}" | tee -a "$GITHUB_ENV"
+          echo "CMAKE_BUILD_TYPE=${{ matrix.llvm-configuration.cmake-build-type }}" | tee -a "$GITHUB_ENV"
+          echo "EXTRA_CMAKE_ARGS=${{ matrix.llvm-configuration.extra-cmake-args }}" | tee -a "$GITHUB_ENV"
           echo "CONFIG_SUFFIX=${{ matrix.llvm-configuration.config-suffix }}" | tee -a "$GITHUB_ENV"
       # - name: Set up QEMU
       #   uses: docker/setup-qemu-action@v2
@@ -66,8 +64,8 @@ jobs:
             BINUTILS_VERSION=${{ env.BINUTILS_VERSION }}
             CMAKE_VERSION=${{ env.CMAKE_VERSION }}
             LLVM_VERSION=${{ env.LLVM_VERSION }}
-            LLVM_ENABLE_PROJECTS=${{ env.LLVM_ENABLE_PROJECTS }}
-            LLVM_ENABLE_RUNTIMES=${{ env.LLVM_ENABLE_RUNTIMES }}
+            CMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}
+            EXTRA_CMAKE_ARGS=${{ env.EXTRA_CMAKE_ARGS }}
           outputs: type=tar,dest=llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}.tar
       - uses: actions/upload-artifact@v3
         with:
