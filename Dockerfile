@@ -71,18 +71,17 @@ ARG LLVM_ENABLE_RUNTIMES
 
 RUN set -ex; \
     \
-    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.tar.xz.sig" -o 'llvm-project.tar.xz.sig'; \
-    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.tar.xz" -o 'llvm-project.tar.xz'; \
+    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.src.tar.xz.sig" -o 'llvm-project.tar.xz.sig'; \
+    curl -fL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/llvm-project-${LLVM_VERSION}.src.tar.xz" -o 'llvm-project.tar.xz'; \
     gpg --batch --verify llvm-project.tar.xz.sig llvm-project.tar.xz; \
     mkdir -p /usr/src/llvm-project; \
     tar -xf llvm-project.tar.xz -C /usr/src/llvm-project --strip-components=1; \
     rm llvm-project.tar.xz*; \
     \
     cd /usr/src/llvm-project; \
-    if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -eq 12 ]; then \
-        curl -fL "https://github.com/llvm/llvm-project/commit/0f140ce33d64b2a8f4f0866debf5fdd36e49b3ad.patch" | git apply; \
-    elif [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -eq 11 ]; then \
-        sed -i -e '/#include <cstdio>/a #include <limits>' flang/runtime/unit.cpp; \
+    if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -lt 13 ]; then \
+        # https://github.com/llvm/llvm-project/commit/0f140ce33d64b2a8f4f0866debf5fdd36e49b3ad.patch
+        sed -i '/^#include <cstdio>$/a#include <limits>' flang/runtime/unit.cpp; \
     fi; \
     if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -lt 12 ]; then \
         curl -fL "https://github.com/llvm/llvm-project/commit/b498303066a63a203d24f739b2d2e0e56dca70d1.patch" | git apply; \
