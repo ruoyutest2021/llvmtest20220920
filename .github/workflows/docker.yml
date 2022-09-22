@@ -21,14 +21,17 @@ jobs:
           - bionic
         llvm-version:
           # - 15.0.1
-          - 14.0.6
+          # - 14.0.6
           # - 13.0.1
           # - 12.0.1
           # - 11.1.0
+          - 10.0.1
+          - 9.0.1
+          - 8.0.1
         llvm-configuration:
-          # - llvm-enable-projects: clang;clang-tools-extra;lld;lldb
-          #   llvm-enable-runtimes: compiler-rt;libcxx;libcxxabi;libunwind;openmp
-          #   config-suffix: ""
+          - llvm-enable-projects: clang;clang-tools-extra;lld;lldb
+            llvm-enable-runtimes: compiler-rt;libcxx;libcxxabi;libunwind;openmp
+            config-suffix: ""
           - llvm-enable-projects: clang;clang-tools-extra;flang;lld;lldb;mlir;polly
             llvm-enable-runtimes: compiler-rt;libcxx;libcxxabi;libunwind;openmp
             config-suffix: -all
