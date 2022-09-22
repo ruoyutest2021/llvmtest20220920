@@ -91,7 +91,7 @@ RUN set -ex; \
     cd "$dir"; \
     \
     cmake \
-        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
         -DLLVM_ENABLE_RUNTIMES="${LLVM_ENABLE_RUNTIMES}" \
         # https://github.com/llvm/llvm-project/issues/55517
