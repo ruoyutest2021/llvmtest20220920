@@ -94,6 +94,8 @@ RUN set -ex; \
         -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DLLVM_ENABLE_PROJECTS="${LLVM_ENABLE_PROJECTS}" \
         -DLLVM_ENABLE_RUNTIMES="${LLVM_ENABLE_RUNTIMES}" \
+        -DLLVM_BUILD_LLVM_DYLIB=ON \
+        -DLLVM_LINK_LLVM_DYLIB=ON \
         # https://github.com/llvm/llvm-project/issues/55517
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON \
         /usr/src/llvm-project/llvm \
