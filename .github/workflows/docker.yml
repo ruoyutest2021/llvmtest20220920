@@ -25,6 +25,11 @@ jobs:
           - 13.0.1
           - 12.0.1
           - 11.1.0
+        exclude:
+          - base-image-tag: bionic
+            llvm-version: 11.1.0
+          - base-image-tag: bionic
+            llvm-version: 15.0.1
         llvm-configuration:
           # - cmake-build-type: Release
           - cmake-build-type: MinSizeRel
