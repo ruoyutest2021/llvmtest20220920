@@ -79,11 +79,8 @@ RUN set -ex; \
     rm llvm-project.tar.xz*; \
     \
     cd /usr/src/llvm-project; \
-    if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -lt 13 ]; then \
-        # https://github.com/llvm/llvm-project/commit/0f140ce33d64b2a8f4f0866debf5fdd36e49b3ad.patch
-        sed -i '/^#include <cstdio>$/a#include <limits>' flang/runtime/unit.cpp; \
-    fi; \
     if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -lt 12 ]; then \
+        # [nfc] Fix missing include
         curl -fL "https://github.com/llvm/llvm-project/commit/b498303066a63a203d24f739b2d2e0e56dca70d1.patch" | git apply; \
     fi; \
     \
@@ -107,10 +104,9 @@ RUN set -ex; \
     rm -rf "$dir" /usr/src/llvm-project
 
 RUN set -ex; \
-    if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -lt 13 ]; then \
+    if [ -d '/usr/local/lib/x86_64-unknown-linux-gnu/c++' ]; then \
         echo '/usr/local/lib/x86_64-unknown-linux-gnu/c++' > /etc/ld.so.conf.d/000-libc++.conf; \
     else \
         echo '/usr/local/lib/x86_64-unknown-linux-gnu' > /etc/ld.so.conf.d/000-libc++.conf; \
     fi; \
     ldconfig -v
-
