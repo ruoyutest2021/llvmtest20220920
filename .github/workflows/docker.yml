@@ -16,9 +16,9 @@ jobs:
         base-image-tag:
           - bullseye
           - buster
-          # - jammy
+          - jammy
           - focal
-          # - bionic
+          - bionic
         llvm-version:
           - 15.0.1
           - 14.0.6
@@ -31,6 +31,7 @@ jobs:
           - extra-cmake-args: -DLLVM_LINK_LLVM_DYLIB=ON
             config-suffix: -slim
     env:
+      DOCKERHUB_REPOSITORY: ruoyutest2021/llvmtest20220920
       PLATFORMS: linux/amd64
       BINUTILS_VERSION: 2.39
       CMAKE_VERSION: 3.24.2
@@ -45,18 +46,22 @@ jobs:
           echo "LLVM_VERSION_REVISION=$(echo "${{ matrix.llvm-version }}" | cut -d '.' -f 3)" | tee -a "$GITHUB_ENV"
           echo "EXTRA_CMAKE_ARGS=${{ matrix.llvm-configuration.extra-cmake-args }}" | tee -a "$GITHUB_ENV"
           echo "CONFIG_SUFFIX=${{ matrix.llvm-configuration.config-suffix }}" | tee -a "$GITHUB_ENV"
-      # - name: Set up QEMU
-      #   uses: docker/setup-qemu-action@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      # - name: Login to DockerHub
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push Docker images
         uses: docker/build-push-action@v3
         with:
+          tags: |
+            ${{ env.DOCKERHUB_REPOSITORY }}:${{ env.LLVM_VERSION_MAJOR }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}
+            ${{ env.DOCKERHUB_REPOSITORY }}:${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}
+            ${{ env.DOCKERHUB_REPOSITORY }}:${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}
           platforms: ${{ env.PLATFORMS }}
           build-args: |
             BASE_IMAGE_TAG=${{ env.BASE_IMAGE_TAG }}
@@ -64,8 +69,4 @@ jobs:
             CMAKE_VERSION=${{ env.CMAKE_VERSION }}
             LLVM_VERSION=${{ env.LLVM_VERSION }}
             EXTRA_CMAKE_ARGS=${{ env.EXTRA_CMAKE_ARGS }}
-          outputs: type=tar,dest=llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}.tar
-      - uses: actions/upload-artifact@v3
-        with:
-          name: llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}
-          path: llvm-${{ env.LLVM_VERSION_MAJOR }}.${{ env.LLVM_VERSION_MINOR }}.${{ env.LLVM_VERSION_REVISION }}${{ env.CONFIG_SUFFIX }}-${{ env.BASE_IMAGE_TAG }}.tar
+          push: true
