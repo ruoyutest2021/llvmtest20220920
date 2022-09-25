@@ -1,7 +1,7 @@
 name: docker
 
 on:
-  # workflow_dispatch:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -14,10 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         base-image-tag:
-          - bullseye
-          - buster
-          - jammy
-          - focal
+          # - bullseye
+          # - buster
+          # - jammy
+          # - focal
           - bionic
         llvm-version:
           - 15.0.1
