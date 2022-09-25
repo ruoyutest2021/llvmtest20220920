@@ -16,7 +16,7 @@ jobs:
         base-image-tag:
           # - bullseye
           # - buster
-          # - jammy
+          - jammy
           # - focal
           - bionic
         llvm-version:
