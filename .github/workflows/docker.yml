@@ -14,13 +14,13 @@ jobs:
       fail-fast: false
       matrix:
         base-image-tag:
-          # - bullseye
-          # - buster
+          - bullseye
+          - buster
           - jammy
-          # - focal
+          - focal
           - bionic
         llvm-version:
-          - 15.0.1
+          - 15.0.3
           - 14.0.6
           - 13.0.1
           - 12.0.1

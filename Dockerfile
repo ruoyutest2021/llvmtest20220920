@@ -86,10 +86,16 @@ RUN set -ex; \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
+    enable_projects="clang;clang-tools-extra;lld;lldb;mlir;polly" \
+    enable_runtimes="compiler-rt;libcxx;libcxxabi;libunwind;openmp" \
+    if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -ge 14 ]; then \
+        enable_projects="${enable_projects};bolt"
+    fi; \
+    \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
-        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb;mlir;polly" \
-        -DLLVM_ENABLE_RUNTIMES="compiler-rt;libcxx;libcxxabi;libunwind;openmp" \
+        -DLLVM_ENABLE_PROJECTS="${enable_projects}" \
+        -DLLVM_ENABLE_RUNTIMES="${enable_runtimes}" \
         -DLLVM_BUILD_LLVM_DYLIB=ON \
         # https://github.com/llvm/llvm-project/issues/55517
         -DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON \
