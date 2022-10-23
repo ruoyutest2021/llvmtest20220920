@@ -86,8 +86,8 @@ RUN set -ex; \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
     \
-    enable_projects="clang;clang-tools-extra;lld;lldb;mlir;polly" \
-    enable_runtimes="compiler-rt;libcxx;libcxxabi;libunwind;openmp" \
+    enable_projects="clang;clang-tools-extra;lld;lldb;mlir;polly"; \
+    enable_runtimes="compiler-rt;libcxx;libcxxabi;libunwind;openmp"; \
     if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -ge 14 ]; then \
         enable_projects="${enable_projects};bolt"; \
     fi; \
