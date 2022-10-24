@@ -82,6 +82,10 @@ RUN set -ex; \
         # [nfc] Fix missing include
         curl -fL "https://github.com/llvm/llvm-project/commit/b498303066a63a203d24f739b2d2e0e56dca70d1.patch" | git apply; \
     fi; \
+    if [ "$(echo "${LLVM_VERSION}" | cut -d '.' -f 1)" -ge 14 ]; then \
+        # [BOLT] Support building bolt when LLVM_LINK_LLVM_DYLIB is ON
+        curl -fL "https://github.com/llvm/llvm-project/commit/61cff9079c083fdcfb9fa324e50b9e480165037e.patch" | git apply; \
+    fi; \
     \
     dir="$(mktemp -d)"; \
     cd "$dir"; \
